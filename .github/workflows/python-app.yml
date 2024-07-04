@@ -36,5 +36,6 @@ jobs:
         flake8 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run Weather App
       run: |
-        cd ${GITHUB_WORKSPACE}/WeatherApp
+        pwd
+        cd ./WeatherApp
         python Test_Weather_App
