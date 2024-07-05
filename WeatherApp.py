@@ -10,39 +10,43 @@ class WeatherApp:
     def __init__(self, root):
         self.root = root
 
+        # Labels and Text Boxes for Station Information
         self.label_station = tk.Label(root, text="Station:")
         self.label_station.pack()
 
-        self.text_station = tk.Text(root, height=1, width=20)
+        self.text_station = tk.Text(root, height=1, width=20, state='disabled')  # Start disabled
         self.text_station.pack()
 
+        # Labels and Text Boxes for Weather Data
         self.label_temperature = tk.Label(root, text="Temperature:")
         self.label_temperature.pack()
 
-        self.text_temperature = tk.Text(root, height=1, width=20)
+        self.text_temperature = tk.Text(root, height=1, width=20, state='disabled')
         self.text_temperature.pack()
 
         self.label_precipitation = tk.Label(root, text="Precipitation:")
         self.label_precipitation.pack()
 
-        self.text_precipitation = tk.Text(root, height=1, width=20)
+        self.text_precipitation = tk.Text(root, height=1, width=20, state='disabled')
         self.text_precipitation.pack()
 
         self.label_humidity = tk.Label(root, text="Humidity:")
         self.label_humidity.pack()
 
-        self.text_humidity = tk.Text(root, height=1, width=20)
+        self.text_humidity = tk.Text(root, height=1, width=20, state='disabled')
         self.text_humidity.pack()
 
         self.label_wind_speed = tk.Label(root, text="Wind Speed:")
         self.label_wind_speed.pack()
 
-        self.text_wind_speed = tk.Text(root, height=1, width=20)
+        self.text_wind_speed = tk.Text(root, height=1, width=20, state='disabled')
         self.text_wind_speed.pack()
 
+        # Frame for graphs
         self.frame_graphs = tk.Frame(root)
         self.frame_graphs.pack()
 
+        # Initialize Figure and Axes for each graph
         self.figure_temperature = Figure(figsize=(5, 4), dpi=100)
         self.axes_temperature = self.figure_temperature.add_subplot(111)
         self.canvas_temperature = FigureCanvasTkAgg(self.figure_temperature, master=self.frame_graphs)
@@ -87,15 +91,63 @@ class WeatherApp:
 
             self.data = data
 
-            self.axes_temperature.plot(data.index, data.temp)
-            self.axes_precipitation.plot(data.index, data.prcp)
-            self.axes_humidity.plot(data.index, data.rhum)
-            self.axes_wind_speed.plot(data.index, data.wspd)
+            # Update text boxes with latest data
+            if 'temp' in data.columns:
+                self.text_temperature.config(state='normal')
+                self.text_temperature.delete(1.0, "end")
+                self.text_temperature.insert("end", f"{data.temp.iloc[0]:.2f} °C")
+                self.text_temperature.config(state='disabled')
+            else:
+                print("Temperature data not available for this station.") 
 
-            self.canvas_temperature.draw()
-            self.canvas_precipitation.draw()
-            self.canvas_humidity.draw()
-            self.canvas_wind_speed.draw()
+            if 'prcp' in data.columns:
+                self.text_precipitation.config(state='normal')
+                self.text_precipitation.delete(1.0, "end")
+                self.text_precipitation.insert("end", f"{data.prcp.iloc[0]:.2f} mm")
+                self.text_precipitation.config(state='disabled')
+            else:
+                    print("Precipitation data not available for this station.") 
+
+            if 'rhum' in data.columns:
+                self.text_humidity.config(state='normal')
+                self.text_humidity.delete(1.0, "end")
+                self.text_humidity.insert("end", f"{data.rhum.iloc[0]:.2f} %")
+                self.text_humidity.config(state='disabled')
+            else:
+                print("Humidity data not available for this station.") 
+
+            if 'wspd' in data.columns:
+                self.text_wind_speed.config(state='normal')
+                self.text_wind_speed.delete(1.0, "end")
+                self.text_wind_speed.insert("end", f"{data.wspd.iloc[0]:.2f} m/s")
+                self.text_wind_speed.config(state='disabled')
+            else:
+                print("Wind speed data not available for this station.") 
+
+            # Plot data
+            if 'temp' in data.columns:
+                self.axes_temperature.plot(data.index, data.temp)
+                self.canvas_temperature.draw()
+            else:
+                print("Temperature data not available for this station.") 
+
+            if 'prcp' in data.columns:
+                self.axes_precipitation.plot(data.index, data.prcp)
+                self.canvas_precipitation.draw()
+            else:
+                print("Precipitation data not available for this station.") 
+
+            if 'rhum' in data.columns:
+                self.axes_humidity.plot(data.index, data.rhum)
+                self.canvas_humidity.draw()
+            else:
+                print("Humidity data not available for this station.") 
+
+            if 'wspd' in data.columns:
+                self.axes_wind_speed.plot(data.index, data.wspd)
+                self.canvas_wind_speed.draw()
+            else:
+                print("Wind speed data not available for this station.") 
 
         except Exception as e:
             print(e)
